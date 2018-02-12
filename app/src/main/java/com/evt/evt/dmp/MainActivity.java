@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         datas=planItems;
     }
 
-    private class PagerAdapter extends FragmentPagerAdapter {
+    private class PagerAdapter extends FragmentStatePagerAdapter  {
         private ArrayList<String> planString;
 
         public PagerAdapter(FragmentManager fm) {
