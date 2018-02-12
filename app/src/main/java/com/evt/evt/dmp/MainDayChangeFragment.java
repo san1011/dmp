@@ -152,6 +152,8 @@ public class MainDayChangeFragment extends Fragment {
                     j++;
                 }
                 //값 recyclerView에 전달
+
+                mainAddPlanAdapter.clearDatas();
                 mainAddPlanAdapter.addDatas(timeDatas);
             }
 
