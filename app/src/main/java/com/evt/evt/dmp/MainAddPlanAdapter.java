@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.ViewHolder> {
     private Context context;
     private ArrayList<PlanItem> datas = new ArrayList<>();
+    public static ArrayList<PlanItem> stackDatas = new ArrayList<>();
     private String currentDay;
     private String dates;
 
@@ -43,11 +44,8 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
 
         final AlertDialog.Builder alBuilder = new AlertDialog.Builder(context); //알림창 띄우기
 
-        /*holder.imageView = (ImageView) holder.imageView;*/
-
         //첫데이터 plan 이미지 그려주기
         if(datas.get(position).getPlan()!=""){
-            /*holder.imageView = (ImageView) holder.imageView;*/
             switch (datas.get(position).getPlan()){
                 case "date":
                     holder.imageView.setImageResource(R.drawable.plan_add_date);
@@ -73,6 +71,13 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
             holder.imageView.setImageResource(0);
         }
 
+        //complete 그려주기
+        if(datas.get(position).getComplete() == 2){
+            holder.imageView1.setVisibility(View.VISIBLE);
+        }else{
+            holder.imageView1.setVisibility(View.INVISIBLE);
+        }
+
         //이미지 드래그앤 드랍 시작
         holder.imageView.setOnDragListener(new View.OnDragListener() {
             @SuppressLint("ResourceType")
@@ -83,13 +88,13 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
                 } else {
                     return false;
                 }
-
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DROP:
                         PlanItem plan = datas.get(position);
                         plan.setPlan(event.getClipDescription().getLabel()+"");
                         datas.set(position, plan);
                         datas.get(position).setComplete(1);
+                        stackDatas=datas;
                         notifyItemChanged(position);
                 }
                 return true;
@@ -108,6 +113,7 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
                                 public void onClick(DialogInterface dialog, int which) {
                                     datas.get(position).setDate(currentDay);
                                     datas.get(position).setComplete(2);
+                                    stackDatas=datas;
                                     holder.imageView1.setVisibility(View.VISIBLE);
                                     notifyDataSetChanged();
                                 }
@@ -118,6 +124,7 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
                                     datas.get(position).setPlan(""); //포지션에 있는 이미지만 빈공간으로 바꿔야함
                                     datas.get(position).setComplete(-1);
                                     datas.get(position).setDate(currentDay);
+                                    stackDatas=datas;
                                     holder.imageView.setImageResource(0);
                                     holder.imageView1.setVisibility(View.INVISIBLE);
                                     notifyDataSetChanged();
@@ -141,12 +148,8 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
         return datas.size();
     }
 
-    public Object getItems() {
+    public ArrayList<PlanItem> getItems() {
         return this.datas;
-    }
-
-    public void setDates(String dates) {
-        this.dates = dates;
     }
 
     public void clearDatas() {

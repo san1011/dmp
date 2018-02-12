@@ -36,7 +36,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class MainDayChangeFragment extends Fragment {
-    //commit test
     private String day;
     private TextView textView;
     private String date;
@@ -112,12 +111,11 @@ public class MainDayChangeFragment extends Fragment {
     //데이터 베이스 저장된 값 불러오는 메소드
     public void getApiPlan() { //currentDay는 0번째부를때는(오늘) MainDayChangeAdapter에서 불러오고 2번째부터는 MainFragment(changePage...메소드에서 불러옴)
 
-        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan("san1011@naver.com",day); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
+        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan(LoginActivity.id,day); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
         comment.enqueue(new Callback<ArrayList<PlanItem>>() {
             @Override
             public void onResponse(Call<ArrayList<PlanItem>> call, Response<ArrayList<PlanItem>> response) {
                 ArrayList<PlanItem> planItems = response.body();
-                Log.v("sanch",planItems+"");
 
                 ArrayList<PlanItem> timeDatas = new ArrayList<>();
                 ArrayList<String> planString = new ArrayList<>(); //plan 배열에 저장
@@ -147,7 +145,7 @@ public class MainDayChangeFragment extends Fragment {
                     timeData.setPlan(planString.get(j));
                     timeData.setComplete(complete.get(j));
                     timeData.setDate("");
-                    timeData.setId("san1011@naver.com");
+                    timeData.setId(LoginActivity.id);
                     timeDatas.add(timeData);
                     j++;
                 }

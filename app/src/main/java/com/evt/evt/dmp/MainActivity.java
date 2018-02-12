@@ -1,22 +1,27 @@
 package com.evt.evt.dmp;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.evt.evt.dmp.Analysis.AnalysisDay;
 import com.evt.evt.dmp.protocal.DmpWebService;
 import com.evt.evt.dmp.protocal.PlanItem;
 import com.google.gson.Gson;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
     private Retrofit retrofit;
     private DmpWebService dmpWebService;
     private ImageButton dating, eating, reading, sleeping, working, work_out;
+    private ActionBar actionBar;
+    private View actionBarLayout;
 
     public static String dbSetDate; //viewPage 데이트 세팅값
     private String day; //초반 날짜세팅
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
     private Date date = new Date();
     private Button button;
     private ArrayList<PlanItem> datas;
+    private android.app.Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
 
         initUi(savedInstanceState);
         initViewPager(savedInstanceState);
+        initActionBar();
     }
 
     public void initUi(Bundle savedInstanceState){
@@ -127,13 +136,8 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         }
     }
 
-    @Override
-    public void getDatasSet(ArrayList<PlanItem> planItems) {
-        datas=planItems;
-    }
 
     private class PagerAdapter extends FragmentStatePagerAdapter  {
-        private ArrayList<String> planString;
 
         public PagerAdapter(FragmentManager fm) {
             super(fm);
@@ -158,28 +162,30 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             return Integer.MAX_VALUE;
         }
 
-        public void setData(ArrayList<String> planString) {
-            this.planString = planString;
-        }
+    }
 
+    @Override
+    public void getDatasSet(ArrayList<PlanItem> planItems) {
     }
 
     //db에 자료넘겨줄 완료 버튼 메소드
     private void setApiPlan() {
+      Log.v("sanch!!",MainAddPlanAdapter.stackDatas+""); //todo 전역변수 사용바꾸기
         ArrayList<PlanItem> resultDatas =new ArrayList<>();
         PlanItem resultData;
 
-        for (int i = 0; i < datas.size(); i++) {
-            if(datas.get(i).getPlan()!=""){ //만일 Date값이 있을때만 (Date는 롱클릭 clipData로 받아오기때문에 longClick없으면 date값이 없음!!!)
+        for (int i = 0; i < MainAddPlanAdapter.stackDatas.size(); i++) {
+            if(MainAddPlanAdapter.stackDatas.get(i).getPlan()!="" || MainAddPlanAdapter.stackDatas.get(i).getDate()!=""){ //만일 Date값이 있을때만 (Date는 롱클릭 clipData로 받아오기때문에 longClick없으면 date값이 없음!!!)
                 resultData = new PlanItem();
-                resultData.setTime(datas.get(i).getTime());
-                resultData.setPlan(datas.get(i).getPlan());
-                resultData.setComplete(datas.get(i).getComplete());
+                resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
+                resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
+                resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
                 resultData.setDate(dbSetDate);
-                resultData.setId("san1011@naver.com");
+                resultData.setId(LoginActivity.id);
                 resultDatas.add(resultData);
             }
         }
+        Log.v("sanch",resultDatas+"");
 
         Call<ArrayList<PlanItem>> comment = dmpWebService.setPlan(resultDatas);  //웹서비스 연결
         comment.enqueue(new Callback<ArrayList<PlanItem>>() {
@@ -228,5 +234,46 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             v.startDragAndDrop(clip, new View.DragShadowBuilder(v), null, 0);
             return false;
         }
+    }
+
+    //액션바 설정
+    public void initActionBar(){
+        actionBar = getSupportActionBar();
+
+        if(actionBar !=null){
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+
+            actionBarLayout = LayoutInflater.from(this).inflate(R.layout.actionbar_layout,null);
+            actionBar.setCustomView(actionBarLayout, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        ImageView backBtn = (ImageView)findViewById(R.id.back_imageView);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+    }
+
+    //액션바 네비게이션 메뉴붙이기
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //액션바 네비게이션 설정
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.day_action:
+                Intent intent =new Intent(getApplicationContext(), AnalysisDay.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
