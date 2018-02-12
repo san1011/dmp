@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class MainDayChangeFragment extends Fragment {
-//commit test
+    //commit test
     private String day;
     private TextView textView;
     private String date;
@@ -152,6 +152,8 @@ public class MainDayChangeFragment extends Fragment {
                     j++;
                 }
                 //값 recyclerView에 전달
+
+                mainAddPlanAdapter.clearDatas();
                 mainAddPlanAdapter.addDatas(timeDatas);
             }
 
@@ -170,4 +172,3 @@ public class MainDayChangeFragment extends Fragment {
         getDatasListener.getDatasSet((ArrayList<PlanItem>) mainAddPlanAdapter.getItems());
     }
 }
-

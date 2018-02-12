@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.ViewHolder> {
     private Context context;
-    private static ArrayList<PlanItem> datas = new ArrayList<>();
+    private ArrayList<PlanItem> datas = new ArrayList<>();
     private String currentDay;
     private String dates;
 
@@ -43,11 +43,11 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
 
         final AlertDialog.Builder alBuilder = new AlertDialog.Builder(context); //알림창 띄우기
 
-        holder.imageView = (ImageView) holder.imageView;
+        /*holder.imageView = (ImageView) holder.imageView;*/
 
         //첫데이터 plan 이미지 그려주기
         if(datas.get(position).getPlan()!=""){
-            holder.imageView = (ImageView) holder.imageView;
+            /*holder.imageView = (ImageView) holder.imageView;*/
             switch (datas.get(position).getPlan()){
                 case "date":
                     holder.imageView.setImageResource(R.drawable.plan_add_date);
@@ -147,6 +147,10 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
 
     public void setDates(String dates) {
         this.dates = dates;
+    }
+
+    public void clearDatas() {
+        this.datas.clear();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
