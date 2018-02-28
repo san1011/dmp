@@ -19,7 +19,6 @@ import com.evt.evt.dmp.protocal.PlanItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -36,24 +35,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressLint("ValidFragment")
 public class MainDayChangeFragment extends Fragment {
-    private String day;
-    private TextView textView;
-    private String date;
-
     private MainAddPlanAdapter mainAddPlanAdapter;
     private RecyclerView recyclerView;
     private getDatas getDatasListener;
     private Retrofit retrofit;
     private DmpWebService dmpWebService;
+    private String selectedDateStr;
 
-    @SuppressLint("ValidFragment")
-    public MainDayChangeFragment(String day) {
-        this.day = day;
+    public MainDayChangeFragment(String selectedDateStr) {
+        this.selectedDateStr=selectedDateStr;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof getDatas) {
             getDatasListener = (getDatas) context;
         } else {
@@ -86,19 +82,17 @@ public class MainDayChangeFragment extends Fragment {
 
         dmpWebService = retrofit.create(DmpWebService.class);
 
-        return inflater.inflate(R.layout.fragment_daychange_viewpager, container, false);
+        return inflater.inflate(R.layout.fragment_daychange, container, false);
 
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        textView = view.findViewById(R.id.textView);
-        textView.setText(day);
-        initRecycler(view);
+        initRecycler(view,savedInstanceState);
     }
 
-    public void initRecycler(View view) {
+    public void initRecycler(View view, Bundle savedInstanceState) {
         mainAddPlanAdapter = new MainAddPlanAdapter();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setAdapter(mainAddPlanAdapter);
@@ -111,7 +105,7 @@ public class MainDayChangeFragment extends Fragment {
     //데이터 베이스 저장된 값 불러오는 메소드
     public void getApiPlan() { //currentDay는 0번째부를때는(오늘) MainDayChangeAdapter에서 불러오고 2번째부터는 MainFragment(changePage...메소드에서 불러옴)
 
-        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan(LoginActivity.id,day); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
+        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan("san1011@naver.com",selectedDateStr); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
         comment.enqueue(new Callback<ArrayList<PlanItem>>() {
             @Override
             public void onResponse(Call<ArrayList<PlanItem>> call, Response<ArrayList<PlanItem>> response) {
@@ -145,7 +139,7 @@ public class MainDayChangeFragment extends Fragment {
                     timeData.setPlan(planString.get(j));
                     timeData.setComplete(complete.get(j));
                     timeData.setDate("");
-                    timeData.setId(LoginActivity.id);
+                    timeData.setId("san1011@naver.com");
                     timeDatas.add(timeData);
                     j++;
                 }

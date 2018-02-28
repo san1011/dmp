@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/analysisDay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:gravity="center"
-        android:textSize="50sp" />
+    <az.plainpie.PieView
+        android:id="@+id/pieView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="136dp"
+        plainpie:inner_pie_padding="30"
+        plainpie:inner_text_visibility="true"
+        plainpie:percentage="75"
+        plainpie:percentage_size="70" />
+
 
     <TextView
         android:id="@+id/textView"
-        android:layout_below="@+id/analysisDay"
+        android:layout_below="@+id/pieView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="현재 계획수 : 10개 실행력 3개 입니다."
         android:textSize="20sp" />
+
+
+
 </RelativeLayout>

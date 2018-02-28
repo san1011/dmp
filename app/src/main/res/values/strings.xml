@@ -7,4 +7,5 @@
     <string name="adRequestPause">요청 중지</string>
     <string name="adRequestResume">요청 재개</string>
     <string name="adRequestForce">강제 요청</string>
+    <string name="action_settings">Analysis</string>
 </resources>

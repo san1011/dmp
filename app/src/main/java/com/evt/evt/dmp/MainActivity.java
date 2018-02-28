@@ -2,23 +2,17 @@ package com.evt.evt.dmp;
 
 import android.content.ClipData;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
+import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.evt.evt.dmp.Analysis.AnalysisDay;
@@ -32,7 +26,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
+import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.model.CalendarEvent;
+import devs.mulham.horizontalcalendar.utils.CalendarEventsPredicate;
+import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,28 +40,98 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MainDayChangeFragment.getDatas{
-    private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
+
     private View.OnLongClickListener onLongClickListener;
     private MainDayChangeFragment mainDayChangeFragment;
     private Retrofit retrofit;
     private DmpWebService dmpWebService;
     private ImageButton dating, eating, reading, sleeping, working, work_out;
-    private ActionBar actionBar;
-    private View actionBarLayout;
 
     public static String dbSetDate; //viewPage 데이트 세팅값
-    private String day; //초반 날짜세팅
-    private DateFormat dateFormet = new SimpleDateFormat("yyyy-MM-dd");
-    private Date date = new Date();
     private Button button;
     private ArrayList<PlanItem> datas;
     private android.app.Fragment fragment;
+    private HorizontalCalendar horizontalCalendar;
+    private String day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        /* start 2 months ago from now */
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.MONTH, -2);
+
+        /* end after 2 months from now */
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.MONTH, 2);
+
+        // Default Date set to Today.
+        final Calendar defaultSelectedDate = Calendar.getInstance();
+
+        horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
+                .range(startDate, endDate)
+                .datesNumberOnScreen(5)
+                .configure()
+                .formatTopText("MMM")
+                .formatMiddleText("dd")
+                .formatBottomText("EEE")
+                .showTopText(true)
+                .showBottomText(true)
+                .textColor(Color.LTGRAY, Color.WHITE)
+                .colorTextMiddle(Color.LTGRAY, Color.parseColor("#ffd54f"))
+                .end()
+                .defaultSelectedDate(defaultSelectedDate)
+                .addEvents(new CalendarEventsPredicate() {
+
+                    Random rnd = new Random();
+                    @Override
+                    public List<CalendarEvent> events(Calendar date) {
+                        List<CalendarEvent> events = new ArrayList<>();
+                        int count = rnd.nextInt(6);
+
+                        for (int i = 0; i <= count; i++){
+                            events.add(new CalendarEvent(Color.rgb(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)), "event"));
+                        }
+
+                        return events;
+                    }
+                })
+                .build();
+
+        Log.i("Default Date", android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString());
+
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString()));
+        fragmentTransaction.commit();
+
+        horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+            @Override
+            public void onDateSelected(Calendar date, int position) {
+                String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
+                Toast.makeText(MainActivity.this, selectedDateStr + " selected!", Toast.LENGTH_SHORT).show();
+                Log.i("onDateSelected", selectedDateStr + " - Position = " + position);
+
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(selectedDateStr));
+                fragmentTransaction.commit();
+            }
+
+        });
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                horizontalCalendar.goToday(false);
+            }
+        });
 
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -75,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         dmpWebService = retrofit.create(DmpWebService.class);
 
         initUi(savedInstanceState);
-        initViewPager(savedInstanceState);
-        initActionBar();
     }
 
     public void initUi(Bundle savedInstanceState){
@@ -105,72 +173,13 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         });
     }
 
-    public void initViewPager(Bundle savedInstanceState){
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                cal.add(Calendar.DATE, position);
-                dbSetDate = dateFormet.format(cal.getTime());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-        if(viewPager.getCurrentItem()==0){
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            dbSetDate = dateFormet.format(cal.getTime());
-        }
-    }
-
-
-    private class PagerAdapter extends FragmentStatePagerAdapter  {
-
-        public PagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.DATE, position);
-            day = dateFormet.format(cal.getTime());
-            return new MainDayChangeFragment(day);
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return super.getItemPosition(object);
-        }
-
-        @Override
-        public int getCount() {
-            return Integer.MAX_VALUE;
-        }
-
-    }
-
     @Override
     public void getDatasSet(ArrayList<PlanItem> planItems) {
     }
 
     //db에 자료넘겨줄 완료 버튼 메소드
     private void setApiPlan() {
-      Log.v("sanch!!",MainAddPlanAdapter.stackDatas+""); //todo 전역변수 사용바꾸기
+      //Log.v("sanch!!",MainAddPlanAdapter.stackDatas+""); //todo 전역변수 사용바꾸기
         ArrayList<PlanItem> resultDatas =new ArrayList<>();
         PlanItem resultData;
 
@@ -236,44 +245,29 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         }
     }
 
-    //액션바 설정
-    public void initActionBar(){
-        actionBar = getSupportActionBar();
-
-        if(actionBar !=null){
-            actionBar.setDisplayShowHomeEnabled(false);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
-
-            actionBarLayout = LayoutInflater.from(this).inflate(R.layout.actionbar_layout,null);
-            actionBar.setCustomView(actionBarLayout, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-
-        ImageView backBtn = (ImageView)findViewById(R.id.back_imageView);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-    }
-
-    //액션바 네비게이션 메뉴붙이기
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
-    //액션바 네비게이션 설정
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
         switch (item.getItemId()){
-            case R.id.day_action:
+            case R.id.action_settings:
                 Intent intent =new Intent(getApplicationContext(), AnalysisDay.class);
                 startActivity(intent);
                 break;
         }
+
         return super.onOptionsItemSelected(item);
+
     }
 }

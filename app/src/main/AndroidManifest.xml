@@ -19,7 +19,8 @@
 
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".MainActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +28,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".Analysis.AnalysisDay"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!--<activity android:name=".LoginActivity"></activity>-->
 
         <activity
             android:name=".advertise.TestAppActivity"
@@ -56,8 +61,7 @@
             android:name=".advertise.BannerTypeJava"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
-        <activity
-            android:name=".Analysis.AnalysisDay" />
+
 
     </application>
 
