@@ -32,6 +32,11 @@
             android:name=".Analysis.AnalysisDay"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".Analysis.About"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
         <!--<activity android:name=".LoginActivity"></activity>-->
 
         <activity

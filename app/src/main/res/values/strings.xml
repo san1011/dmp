@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">좋은 하루</string>
     <string name="kakao_app_key">efe71b74cd5ed65cff335f26b62ec144</string>
     <string name="appName">Adfit Sample</string>
     <string name="adfit">Adfit</string>
@@ -8,4 +8,5 @@
     <string name="adRequestResume">요청 재개</string>
     <string name="adRequestForce">강제 요청</string>
     <string name="action_settings">Analysis</string>
+    <string name="action_about">About</string>
 </resources>
