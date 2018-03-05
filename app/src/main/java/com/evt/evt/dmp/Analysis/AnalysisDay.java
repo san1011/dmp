@@ -94,7 +94,7 @@ public class AnalysisDay extends AppCompatActivity{
         pieView.setPercentage(average);
 
         PieAngleAnimation animation = new PieAngleAnimation(pieView);
-        animation.setDuration(5000); //This is the duration of the animation in millis
+        animation.setDuration(1000); //This is the duration of the animation in millis
         pieView.startAnimation(animation);
     }
 

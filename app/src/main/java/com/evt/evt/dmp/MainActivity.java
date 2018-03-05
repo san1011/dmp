@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.evt.evt.dmp.Analysis.About;
 import com.evt.evt.dmp.Analysis.AnalysisDay;
 import com.evt.evt.dmp.protocal.DmpWebService;
 import com.evt.evt.dmp.protocal.PlanItem;
@@ -107,13 +108,15 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString()));
+        day=android.text.format.DateFormat.format("yyyy-MM-dd",defaultSelectedDate).toString();
+        fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(day));
         fragmentTransaction.commit();
 
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Calendar date, int position) {
                 String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
+                day = selectedDateStr;
                 Toast.makeText(MainActivity.this, selectedDateStr + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", selectedDateStr + " - Position = " + position);
 
@@ -189,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
                 resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
                 resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
-                resultData.setDate(dbSetDate);
-                resultData.setId(LoginActivity.id);
+                resultData.setDate(day);
+                resultData.setId("san1011@naver.com");
                 resultDatas.add(resultData);
             }
         }
@@ -264,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             case R.id.action_settings:
                 Intent intent =new Intent(getApplicationContext(), AnalysisDay.class);
                 startActivity(intent);
+                break;
+            case R.id.action_about:
+                Intent intent1 = new Intent(getApplicationContext(), About.class);
+                startActivity(intent1);
                 break;
         }
 
