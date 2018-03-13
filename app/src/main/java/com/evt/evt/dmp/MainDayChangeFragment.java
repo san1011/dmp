@@ -40,10 +40,13 @@ public class MainDayChangeFragment extends Fragment {
     private getDatas getDatasListener;
     private Retrofit retrofit;
     private DmpWebService dmpWebService;
-    private String selectedDateStr;
+    private TextView textView;
+    private String day;
 
-    public MainDayChangeFragment(String selectedDateStr) {
-        this.selectedDateStr=selectedDateStr;
+
+    @SuppressLint("ValidFragment")
+    public MainDayChangeFragment(String day) {
+        this.day = day;
     }
 
     @Override
@@ -82,14 +85,18 @@ public class MainDayChangeFragment extends Fragment {
 
         dmpWebService = retrofit.create(DmpWebService.class);
 
-        return inflater.inflate(R.layout.fragment_daychange, container, false);
+        return inflater.inflate(R.layout.fragment_daychange_viewpager, container, false);
 
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        textView = (TextView) view.findViewById(R.id.textView);
+        textView.setText(day);
         initRecycler(view,savedInstanceState);
+
     }
 
     public void initRecycler(View view, Bundle savedInstanceState) {
@@ -105,12 +112,11 @@ public class MainDayChangeFragment extends Fragment {
     //데이터 베이스 저장된 값 불러오는 메소드
     public void getApiPlan() { //currentDay는 0번째부를때는(오늘) MainDayChangeAdapter에서 불러오고 2번째부터는 MainFragment(changePage...메소드에서 불러옴)
 
-        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan("san1011@naver.com",selectedDateStr); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
+        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan("san1011@naver.com",day); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
         comment.enqueue(new Callback<ArrayList<PlanItem>>() {
             @Override
             public void onResponse(Call<ArrayList<PlanItem>> call, Response<ArrayList<PlanItem>> response) {
                 ArrayList<PlanItem> planItems = response.body();
-
                 ArrayList<PlanItem> timeDatas = new ArrayList<>();
                 ArrayList<String> planString = new ArrayList<>(); //plan 배열에 저장
                 ArrayList<Integer> complete = new ArrayList<>(); //complete 배열에 저장

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.evt.evt.dmp.protocal.PlanItem;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -46,24 +48,26 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
 
         //첫데이터 plan 이미지 그려주기
         if(datas.get(position).getPlan()!=""){
+            holder.textView1.setVisibility(View.INVISIBLE); //todo visible로 만들기
+            Log.d("sanch",position+"");
             switch (datas.get(position).getPlan()){
                 case "date":
-                    holder.imageView.setImageResource(R.drawable.plan_add_date);
+                    holder.imageView.setImageResource(R.drawable.plan_add_date_square);
                     break;
                 case "eating":
-                    holder.imageView.setImageResource(R.drawable.plan_add_eating);
+                    holder.imageView.setImageResource(R.drawable.plan_add_eating_square);
                     break;
                 case "reading":
-                    holder.imageView.setImageResource(R.drawable.plan_add_reading);
+                    holder.imageView.setImageResource(R.drawable.plan_add_reading_square);
                     break;
                 case "sleeping":
-                    holder.imageView.setImageResource(R.drawable.plan_add_sleep);
+                    holder.imageView.setImageResource(R.drawable.plan_add_sleep_square);
                     break;
                 case "working":
-                    holder.imageView.setImageResource(R.drawable.plan_add_work);
+                    holder.imageView.setImageResource(R.drawable.plan_add_work_square);
                     break;
                 case "fitness":
-                    holder.imageView.setImageResource(R.drawable.plan_add_workout);
+                    holder.imageView.setImageResource(R.drawable.plan_add_workout_square);
                     break;
             }
         }else{
@@ -158,12 +162,14 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView textView;
+        private TextView textView1;
         private ImageView imageView;
         private ImageView imageView1;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.textView);
+            textView1 = (TextView) itemView.findViewById(R.id.textView1);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             imageView1 = (ImageView) itemView.findViewById(R.id.imageView1);
         }

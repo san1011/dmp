@@ -29,91 +29,85 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
         android:layout_below="@+id/appBar"
-        android:id="@+id/content"
-        android:layout_width="330dp"
-        android:layout_height="530dp">
-    </RelativeLayout>
+        android:id="@+id/viewPager"
+        android:layout_width="300dp"
+        android:layout_height="430dp">
+    </android.support.v4.view.ViewPager>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_below="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_toRightOf="@id/content"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/viewPager"
+        android:gravity="center"
+        android:orientation="vertical"
         android:id="@+id/imgrelativeLayout">
 
         <ImageButton
             android:id="@+id/image_date"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/plan_add_date" />
 
         <ImageButton
             android:id="@+id/image_eating"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/image_date"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/plan_add_eating" />
 
         <ImageButton
             android:id="@+id/image_reading"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/image_eating"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/plan_add_reading" />
 
         <ImageButton
             android:id="@+id/image_sleeping"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/image_reading"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/plan_add_sleep" />
 
         <ImageButton
             android:id="@+id/image_working"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/image_sleeping"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/plan_add_work" />
 
         <ImageButton
             android:id="@+id/image_work_out"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@+id/image_working"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/plan_add_workout" />
 
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_below="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:id="@+id/linearLayout">
-
-        <Button
-            android:id="@+id/button"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="완료"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/image_work_out"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_calendar_24dp" />
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/imgrelativeLayout"
-        android:layout_marginEnd="19dp"
-        android:src="@drawable/ic_calendar_24dp" />
+        android:layout_height="40dp"
+        android:layout_below="@+id/viewPager"
+        android:layout_centerHorizontal="true"
+        android:text="완료"/>
+
+
 
 </RelativeLayout>

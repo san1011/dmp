@@ -1,9 +1,16 @@
 package com.evt.evt.dmp;
 
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,8 +18,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Scroller;
 import android.widget.Toast;
 
 import com.evt.evt.dmp.Analysis.About;
@@ -22,6 +32,7 @@ import com.evt.evt.dmp.protocal.PlanItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.HorizontalCalendarView;
 import devs.mulham.horizontalcalendar.model.CalendarEvent;
 import devs.mulham.horizontalcalendar.utils.CalendarEventsPredicate;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
@@ -48,12 +60,19 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
     private DmpWebService dmpWebService;
     private ImageButton dating, eating, reading, sleeping, working, work_out;
 
-    public static String dbSetDate; //viewPage 데이트 세팅값
     private Button button;
     private ArrayList<PlanItem> datas;
     private android.app.Fragment fragment;
     private HorizontalCalendar horizontalCalendar;
-    private String day;
+
+
+    public static String dbSetDate; //viewPage 데이트 세팅값
+    private String day; //초반 날짜세팅
+    private DateFormat dateFormet = new SimpleDateFormat("yyyy-MM-dd");
+    private Date date = new Date();
+
+    private ViewPager viewPager;
+    private PagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +82,15 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /* start 2 months ago from now */
+        // start 2 months ago from now
         Calendar startDate = Calendar.getInstance();
-        startDate.add(Calendar.MONTH, -2);
+        startDate.add(Calendar.MONTH, -1);
 
-        /* end after 2 months from now */
+        // end after 2 months from now
         Calendar endDate = Calendar.getInstance();
-        endDate.add(Calendar.MONTH, 2);
+        endDate.add(Calendar.MONTH, 1);
 
-        // Default Date set to Today.
+        // Default Date se읽ㄴt to Today.
         final Calendar defaultSelectedDate = Calendar.getInstance();
 
         horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
@@ -106,27 +125,23 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
 
         Log.i("Default Date", android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString());
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         day=android.text.format.DateFormat.format("yyyy-MM-dd",defaultSelectedDate).toString();
-        fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(day));
-        fragmentTransaction.commit();
 
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Calendar date, int position) {
-                String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
-                day = selectedDateStr;
-                Toast.makeText(MainActivity.this, selectedDateStr + " selected!", Toast.LENGTH_SHORT).show();
-                Log.i("onDateSelected", selectedDateStr + " - Position = " + position);
-
-                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(selectedDateStr));
-                fragmentTransaction.commit();
+                day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
+                Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
+                Log.i("onDateSelected", day + " - Position = " + position);
+                //viewPager.setCurrentItem(position);
             }
 
+            @Override
+            public void onCalendarScroll(HorizontalCalendarView calendarView, int dx, int dy) {
+                super.onCalendarScroll(calendarView, dx, dy);
+            }
         });
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +163,10 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         dmpWebService = retrofit.create(DmpWebService.class);
 
         initUi(savedInstanceState);
+        initViewPager(savedInstanceState);
     }
+
+
 
     public void initUi(Bundle savedInstanceState){
         onLongClickListener = new OnLongClickListener();
@@ -176,6 +194,62 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         });
     }
 
+    public void initViewPager(Bundle savedInstanceState){
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(30);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                cal.add(Calendar.DATE, position-30);
+                dbSetDate = dateFormet.format(cal.getTime());
+                horizontalCalendar.centerCalendarToPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    private class PagerAdapter extends FragmentStatePagerAdapter {
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DATE, position-30);
+            day = dateFormet.format(cal.getTime());
+            Log.d("sanch","position : "+position);
+            return new MainDayChangeFragment(day);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return super.getItemPosition(object);
+        }
+
+        @Override
+        public int getCount() {
+            return 61;
+        }
+
+    }
+
+
     @Override
     public void getDatasSet(ArrayList<PlanItem> planItems) {
     }
@@ -192,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
                 resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
                 resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
-                resultData.setDate(day);
+                resultData.setDate(dbSetDate);
                 resultData.setId("san1011@naver.com");
                 resultDatas.add(resultData);
             }
@@ -271,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             case R.id.action_about:
                 Intent intent1 = new Intent(getApplicationContext(), About.class);
                 startActivity(intent1);
-                break;
         }
 
         return super.onOptionsItemSelected(item);
