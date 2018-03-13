@@ -125,15 +125,35 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
 
         Log.i("Default Date", android.text.format.DateFormat.format("yyyy-MM-dd", defaultSelectedDate).toString());
 
+<<<<<<< HEAD
         day=android.text.format.DateFormat.format("yyyy-MM-dd",defaultSelectedDate).toString();
+=======
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        day=android.text.format.DateFormat.format("yyyy-MM-dd",defaultSelectedDate).toString();
+        fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(day));
+        fragmentTransaction.commit();
+>>>>>>> 980183da9cb048f9b94ed6a697033fac03b5897a
 
         horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
             @Override
             public void onDateSelected(Calendar date, int position) {
+<<<<<<< HEAD
                 day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
                 Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", day + " - Position = " + position);
                 //viewPager.setCurrentItem(position);
+=======
+                String selectedDateStr = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
+                day = selectedDateStr;
+                Toast.makeText(MainActivity.this, selectedDateStr + " selected!", Toast.LENGTH_SHORT).show();
+                Log.i("onDateSelected", selectedDateStr + " - Position = " + position);
+
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content, new MainDayChangeFragment(selectedDateStr));
+                fragmentTransaction.commit();
+>>>>>>> 980183da9cb048f9b94ed6a697033fac03b5897a
             }
 
             @Override
@@ -266,7 +286,11 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
                 resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
                 resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
+<<<<<<< HEAD
                 resultData.setDate(dbSetDate);
+=======
+                resultData.setDate(day);
+>>>>>>> 980183da9cb048f9b94ed6a697033fac03b5897a
                 resultData.setId("san1011@naver.com");
                 resultDatas.add(resultData);
             }
@@ -345,6 +369,10 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             case R.id.action_about:
                 Intent intent1 = new Intent(getApplicationContext(), About.class);
                 startActivity(intent1);
+<<<<<<< HEAD
+=======
+                break;
+>>>>>>> 980183da9cb048f9b94ed6a697033fac03b5897a
         }
 
         return super.onOptionsItemSelected(item);
