@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
                 Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", day + " - Position = " + position);
-                //viewPager.setCurrentItem(position);
+                viewPager.setCurrentItem(position);
             }
 
             @Override

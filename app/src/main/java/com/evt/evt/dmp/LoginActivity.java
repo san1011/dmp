@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Log.d("sanch", "생성");
 
         try{
             PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_SIGNATURES);
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)){
+
             return ;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -70,7 +72,7 @@ public class LoginActivity extends AppCompatActivity{
 
             @Override
             public void onNotSignedUp() {
-
+                Log.d("sanch", "onNotSignedUp");
             }
 
             //사용자 정보 넘겨주는 메소드 (전역변수로 id값 지정했음)
@@ -88,6 +90,7 @@ public class LoginActivity extends AppCompatActivity{
 
         @Override
         public void onSessionOpened() {
+            Log.d("sanch", "onNotSignedUp");
             request();
         }
 

@@ -93,8 +93,8 @@ public class MainDayChangeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        textView = (TextView) view.findViewById(R.id.textView);
-        textView.setText(day);
+     /*   textView = (TextView) view.findViewById(R.id.textView);
+        textView.setText(day);*/
         initRecycler(view,savedInstanceState);
 
     }
