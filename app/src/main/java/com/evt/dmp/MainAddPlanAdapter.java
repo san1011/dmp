@@ -13,9 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.evt.dmp.protocal.PlanItem;
-
-import org.w3c.dom.Text;
+import com.evt.dmp.protocal.dto.PlanItem;
 
 import java.util.ArrayList;
 
@@ -43,14 +41,14 @@ public class MainAddPlanAdapter extends RecyclerView.Adapter<MainAddPlanAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.textView.setText(datas.get(position).getTime());
-        Log.d("sanch",position+"");
+        //Log.d("sanch",position+"");
 
         final AlertDialog.Builder alBuilder = new AlertDialog.Builder(context); //알림창 띄우기
 
         //첫데이터 plan 이미지 그려주기
         if(datas.get(position).getPlan()!=""){
             holder.textView1.setVisibility(View.INVISIBLE); //todo visible로 만들기
-            Log.d("sanch",position+"");
+           // Log.d("sanch",position+"");
             switch (datas.get(position).getPlan()){
                 case "date":
                     holder.imageView.setImageResource(R.drawable.plan_add_date_square);

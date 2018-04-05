@@ -1,15 +1,12 @@
 package com.evt.dmp;
 
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,33 +15,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Scroller;
 import android.widget.Toast;
 
 import com.evt.dmp.Analysis.About;
 import com.evt.dmp.Analysis.AnalysisDay;
 import com.evt.dmp.protocal.DmpWebService;
-import com.evt.dmp.protocal.PlanItem;
+import com.evt.dmp.protocal.dto.PlanItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.HorizontalCalendarView;
-import devs.mulham.horizontalcalendar.model.CalendarEvent;
-import devs.mulham.horizontalcalendar.utils.CalendarEventsPredicate;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -132,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
                 Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", day + " - Position = " + position);
-                viewPager.setCurrentItem(position);
+                //viewPager.setCurrentItem(position);
             }
 
             @Override
@@ -208,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 cal.setTime(date);
                 cal.add(Calendar.DATE, position-30);
                 dbSetDate = dateFormet.format(cal.getTime());
-                horizontalCalendar.centerCalendarToPosition(position);
+                //horizontalCalendar.centerCalendarToPosition(position);
             }
 
             @Override
@@ -230,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             cal.setTime(date);
             cal.add(Calendar.DATE, position-30);
             day = dateFormet.format(cal.getTime());
-            Log.d("sanch","position : "+position);
+            //Log.d("sanch","position : "+position);
             return new MainDayChangeFragment(day);
         }
 
@@ -253,6 +242,10 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
 
     //db에 자료넘겨줄 완료 버튼 메소드
     private void setApiPlan() {
+        /*ActivityCompat.finishAffinity(this);
+        System.runFinalizersOnExit(true);
+        System.exit(0);*/
+
         //Log.v("sanch!!",MainAddPlanAdapter.stackDatas+""); //todo 전역변수 사용바꾸기
         ArrayList<PlanItem> resultDatas =new ArrayList<>();
         PlanItem resultData;
@@ -263,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
                 resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
                 resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
-                resultData.setDate(dbSetDate);
+                resultData.setDate("2018-03-28"); //todo date 변경해야함
                 resultData.setId("san1011@naver.com");
                 resultDatas.add(resultData);
             }

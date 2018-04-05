@@ -8,7 +8,8 @@ import android.widget.TextView;
 import com.evt.dmp.MainActivity;
 import com.evt.dmp.R;
 import com.evt.dmp.protocal.DmpWebService;
-import com.evt.dmp.protocal.PlanItem;
+import com.evt.dmp.protocal.dto.PlanItem;
+import com.evt.dmp.protocal.dto.PlanItemRoot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class AnalysisDay extends AppCompatActivity{
     private DmpWebService dmpWebService;
     private float cnt=0,resultScore=0;
     private MainActivity mainActivity;
+    private PlanItemRoot planItemRoot;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,12 +59,21 @@ public class AnalysisDay extends AppCompatActivity{
     }
 
     public void getApiPlan(){
-        Call<ArrayList<PlanItem>> comment = dmpWebService.getAllPlan();
+        Call<PlanItemRoot> comment = dmpWebService.getAllPlan();
 
-        comment.enqueue(new Callback<ArrayList<PlanItem>>() {
+        comment.enqueue(new Callback<PlanItemRoot>() {
             @Override
-            public void onResponse(Call<ArrayList<PlanItem>> call, Response<ArrayList<PlanItem>> response) {
-                ArrayList<PlanItem> planItems = response.body();
+            public void onResponse(Call<PlanItemRoot> call, Response<PlanItemRoot> response) {
+
+                planItemRoot = response.body();
+
+                ArrayList<PlanItem> planItems = new ArrayList<>();
+
+                for(PlanItem planItem : planItemRoot.getResponse()){
+                   planItems.add(planItem);
+                }
+
+                Log.d("sanch",planItems+"");
                 for(int i=0; i<planItems.size(); i++){
                     if(planItems.get(i).getComplete()==2||planItems.get(i).getComplete()==1){
                         cnt++;
@@ -75,7 +86,7 @@ public class AnalysisDay extends AppCompatActivity{
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlanItem>> call, Throwable t) {
+            public void onFailure(Call<PlanItemRoot> call, Throwable t) {
                 Log.e("[Error]",""+t.getMessage());
             }
         });

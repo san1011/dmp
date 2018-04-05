@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.evt.dmp.protocal.DmpWebService;
-import com.evt.dmp.protocal.PlanItem;
+import com.evt.dmp.protocal.dto.PlanItem;
+import com.evt.dmp.protocal.dto.PlanItemRoot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,7 +43,8 @@ public class MainDayChangeFragment extends Fragment {
     private DmpWebService dmpWebService;
     private TextView textView;
     private String day;
-
+    private PlanItemRoot planItemRoot;
+    private ArrayList<PlanItem> planItems = new ArrayList<>();
 
     @SuppressLint("ValidFragment")
     public MainDayChangeFragment(String day) {
@@ -93,8 +95,8 @@ public class MainDayChangeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-     /*   textView = (TextView) view.findViewById(R.id.textView);
-        textView.setText(day);*/
+        textView = (TextView) view.findViewById(R.id.textView);
+        textView.setText(day);
         initRecycler(view,savedInstanceState);
 
     }
@@ -112,15 +114,22 @@ public class MainDayChangeFragment extends Fragment {
     //데이터 베이스 저장된 값 불러오는 메소드
     public void getApiPlan() { //currentDay는 0번째부를때는(오늘) MainDayChangeAdapter에서 불러오고 2번째부터는 MainFragment(changePage...메소드에서 불러옴)
 
-        Call<ArrayList<PlanItem>> comment = dmpWebService.getPlan("san1011@naver.com",day); //웹서비스에 id와 페이지의 날짜를 parameter로 날린다
-        comment.enqueue(new Callback<ArrayList<PlanItem>>() {
+        Call<PlanItemRoot> comment = dmpWebService.getPlan("san1011@naver.com",day); //todo id, date 변수로 담아야함 변수에 빈값이면 nullpointExeception
+        comment.enqueue(new Callback<PlanItemRoot>() {
             @Override
-            public void onResponse(Call<ArrayList<PlanItem>> call, Response<ArrayList<PlanItem>> response) {
-                ArrayList<PlanItem> planItems = response.body();
+            public void onResponse(Call<PlanItemRoot> call, Response<PlanItemRoot> response) {
+                planItemRoot = response.body();
+                Log.d("sanch",day);
+
+                for(PlanItem planItem : planItemRoot.getResponse()){
+                    planItems.add(planItem); //todo 객체 새로만듬
+                }
+
                 ArrayList<PlanItem> timeDatas = new ArrayList<>();
                 ArrayList<String> planString = new ArrayList<>(); //plan 배열에 저장
                 ArrayList<Integer> complete = new ArrayList<>(); //complete 배열에 저장
                 PlanItem timeData;
+                //Log.d("sanch",planItems+"");
 
                 for(int i=6; i<=24; i++){ //기초 데이터 파싱
                     boolean flag=false;
@@ -156,7 +165,7 @@ public class MainDayChangeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlanItem>> call, Throwable t) {
+            public void onFailure(Call<PlanItemRoot> call, Throwable t) {
                 Log.e("setApiPlan", "error:" + t.getMessage());
             }
         });

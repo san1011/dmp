@@ -1,4 +1,4 @@
-package com.evt.dmp.protocal;
+package com.evt.dmp.protocal.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
