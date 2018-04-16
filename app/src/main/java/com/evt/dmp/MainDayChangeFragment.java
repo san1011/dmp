@@ -119,7 +119,6 @@ public class MainDayChangeFragment extends Fragment {
             @Override
             public void onResponse(Call<PlanItemRoot> call, Response<PlanItemRoot> response) {
                 planItemRoot = response.body();
-                Log.d("sanch",day);
 
                 for(PlanItem planItem : planItemRoot.getResponse()){
                     planItems.add(planItem); //todo 객체 새로만듬

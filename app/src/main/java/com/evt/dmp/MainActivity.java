@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 cal.setTime(date);
                 cal.add(Calendar.DATE, position-30);
                 dbSetDate = dateFormet.format(cal.getTime());
+                Log.v("sanch",dbSetDate);
                 //horizontalCalendar.centerCalendarToPosition(position);
             }
 
@@ -219,7 +220,9 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             cal.setTime(date);
             cal.add(Calendar.DATE, position-30);
             day = dateFormet.format(cal.getTime());
+            dbSetDate=day;
             //Log.d("sanch","position : "+position);
+            Log.d("sanch",dbSetDate);
             return new MainDayChangeFragment(day);
         }
 
