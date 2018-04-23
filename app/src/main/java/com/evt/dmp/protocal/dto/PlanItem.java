@@ -17,7 +17,7 @@ public class PlanItem implements Serializable {
     @SerializedName("plan")
     @Expose
     String plan;
-    @SerializedName("complete") //0:계획없음 1:성공 -1:실패
+    @SerializedName("complete") //1:계획없음 2:성공 -1:실패
     @Expose
     int complete;
     @SerializedName("date")

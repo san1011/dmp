@@ -3,6 +3,7 @@ package com.evt.dmp;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
                 Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", day + " - Position = " + position);
-                //viewPager.setCurrentItem(position);
+                viewPager.setCurrentItem(position-3);
             }
 
             @Override
@@ -185,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(30);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        dbSetDate = dateFormet.format(cal.getTime());
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -197,8 +201,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 cal.setTime(date);
                 cal.add(Calendar.DATE, position-30);
                 dbSetDate = dateFormet.format(cal.getTime());
-                Log.v("sanch",dbSetDate);
-                //horizontalCalendar.centerCalendarToPosition(position);
+                horizontalCalendar.centerCalendarToPosition(position+3);
             }
 
             @Override
@@ -220,9 +223,6 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
             cal.setTime(date);
             cal.add(Calendar.DATE, position-30);
             day = dateFormet.format(cal.getTime());
-            dbSetDate=day;
-            //Log.d("sanch","position : "+position);
-            Log.d("sanch",dbSetDate);
             return new MainDayChangeFragment(day);
         }
 
@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 resultData.setTime(MainAddPlanAdapter.stackDatas.get(i).getTime());
                 resultData.setPlan(MainAddPlanAdapter.stackDatas.get(i).getPlan());
                 resultData.setComplete(MainAddPlanAdapter.stackDatas.get(i).getComplete());
-                resultData.setDate("2018-03-28"); //todo date 변경해야함
-                resultData.setId("san1011@naver.com");
+                resultData.setDate(dbSetDate);
+                resultData.setId(LoginActivity.id); //todo Login전역변수로 변경해야함
                 resultDatas.add(resultData);
             }
         }
@@ -310,7 +310,10 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                     clip = ClipData.newPlainText("fitness", day);
                     break;
             }
-            v.startDragAndDrop(clip, new View.DragShadowBuilder(v), null, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                v.startDragAndDrop(clip, new View.DragShadowBuilder(v), null, 0);
+            }else{
+            }
             return false;
         }
     }

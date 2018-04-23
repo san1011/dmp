@@ -114,7 +114,7 @@ public class MainDayChangeFragment extends Fragment {
     //데이터 베이스 저장된 값 불러오는 메소드
     public void getApiPlan() { //currentDay는 0번째부를때는(오늘) MainDayChangeAdapter에서 불러오고 2번째부터는 MainFragment(changePage...메소드에서 불러옴)
 
-        Call<PlanItemRoot> comment = dmpWebService.getPlan("san1011@naver.com",day); //todo id, date 변수로 담아야함 변수에 빈값이면 nullpointExeception
+        Call<PlanItemRoot> comment = dmpWebService.getPlan(LoginActivity.id,day); //todo id, date 변수로 담아야함 변수에 빈값이면 nullpointExeception
         comment.enqueue(new Callback<PlanItemRoot>() {
             @Override
             public void onResponse(Call<PlanItemRoot> call, Response<PlanItemRoot> response) {
@@ -153,7 +153,7 @@ public class MainDayChangeFragment extends Fragment {
                     timeData.setPlan(planString.get(j));
                     timeData.setComplete(complete.get(j));
                     timeData.setDate("");
-                    timeData.setId("san1011@naver.com");
+                    timeData.setId(LoginActivity.id);
                     timeDatas.add(timeData);
                     j++;
                 }

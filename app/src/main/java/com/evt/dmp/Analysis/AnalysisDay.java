@@ -73,7 +73,6 @@ public class AnalysisDay extends AppCompatActivity{
                    planItems.add(planItem);
                 }
 
-                Log.d("sanch",planItems+"");
                 for(int i=0; i<planItems.size(); i++){
                     if(planItems.get(i).getComplete()==2||planItems.get(i).getComplete()==1){
                         cnt++;
