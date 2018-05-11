@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kakao.auth.ISessionCallback;
@@ -30,6 +33,8 @@ import java.security.MessageDigest;
 public class LoginActivity extends AppCompatActivity{
 
     private SessionCallback sessionCallback;
+    private Button button,button1;
+    private EditText editId,editPass;
     public static String id;
 
     @Override
@@ -54,6 +59,40 @@ public class LoginActivity extends AppCompatActivity{
         sessionCallback = new SessionCallback();
         Session.getCurrentSession().addCallback(sessionCallback);
         Session.getCurrentSession().checkAndImplicitOpen();
+
+        initUi(savedInstanceState);
+    }
+
+
+    public void initUi(Bundle savedInstanceState){
+        button = (Button) findViewById(R.id.button);
+        button1 = (Button) findViewById(R.id.button1);
+        editId = (EditText) findViewById(R.id.editText);
+        editPass = (EditText) findViewById(R.id.editText1);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                id = editId.getText().toString();
+                if(id.equals("")){
+                    Toast.makeText(getApplicationContext(),"아이디를 입력해주세요",Toast.LENGTH_LONG).show();
+                }else if(editPass.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(),"비밀번호를 입력해주세요",Toast.LENGTH_LONG).show();
+                }else{
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), NewAdminActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

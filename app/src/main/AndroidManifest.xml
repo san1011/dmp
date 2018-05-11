@@ -40,6 +40,11 @@
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
+
+        <activity android:name=".NewAdminActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+
         <activity
             android:name=".advertise.TestAppActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
