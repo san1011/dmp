@@ -72,8 +72,6 @@
             android:name=".advertise.BannerTypeJava"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
-
-
     </application>
 
 </manifest>
