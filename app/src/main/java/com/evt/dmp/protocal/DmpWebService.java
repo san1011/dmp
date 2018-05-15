@@ -1,5 +1,6 @@
 package com.evt.dmp.protocal;
 
+import com.evt.dmp.protocal.dto.NewAdmin;
 import com.evt.dmp.protocal.dto.PlanItem;
 import com.evt.dmp.protocal.dto.PlanItemRoot;
 
@@ -16,7 +17,8 @@ import retrofit2.http.Query;
  */
 
 public interface DmpWebService {
-    public static final String API_URL = "http://52.79.54.80:9000/dmp/";
+    //public static final String API_URL = "http://52.79.54.80:9000/dmp/";
+    public static final String API_URL = "http://192.168.10.56:1338/dmp/";
 
     @POST("plan")
     Call<ArrayList<PlanItem>> setPlan(@Body ArrayList<PlanItem> planItem);
@@ -28,4 +30,10 @@ public interface DmpWebService {
     Call<PlanItemRoot> getPlan(
             @Query("id") String id, @Query("date") String date
     );
+
+    @POST("new")
+    Call<NewAdmin> setAdmin(@Body NewAdmin newAdmin);
+
+    @GET("login")
+    Call<ArrayList<NewAdmin>> setLogin();
 }

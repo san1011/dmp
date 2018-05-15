@@ -14,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.evt.dmp.protocal.DmpWebService;
+import com.evt.dmp.protocal.dto.NewAdmin;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
@@ -23,6 +27,13 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by everitime5 on 2018-01-30.
@@ -36,6 +47,8 @@ public class LoginActivity extends AppCompatActivity{
     private Button button,button1;
     private EditText editId,editPass;
     public static String id;
+    private DmpWebService dmpWebService;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +69,18 @@ public class LoginActivity extends AppCompatActivity{
             Log.d("error", "PackageInfo error is " + e.toString());
         }
 
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(DmpWebService.API_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        dmpWebService = retrofit.create(DmpWebService.class);
+
         sessionCallback = new SessionCallback();
         Session.getCurrentSession().addCallback(sessionCallback);
         Session.getCurrentSession().checkAndImplicitOpen();
@@ -73,14 +98,19 @@ public class LoginActivity extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                NewAdmin newAdmin = new NewAdmin();
+
+
                 id = editId.getText().toString();
                 if(id.equals("")){
                     Toast.makeText(getApplicationContext(),"아이디를 입력해주세요",Toast.LENGTH_LONG).show();
                 }else if(editPass.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),"비밀번호를 입력해주세요",Toast.LENGTH_LONG).show();
                 }else{
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
+                    newAdmin.setId(id);
+                    newAdmin.setPass(editPass.getText().toString());
+
+                    getApiLogin(newAdmin);
                 }
             }
         });
@@ -93,6 +123,38 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
+    }
+
+    private void getApiLogin(final NewAdmin newAdmin) {
+        Call<ArrayList<NewAdmin>> comment = dmpWebService.setLogin();
+        comment.enqueue(new Callback<ArrayList<NewAdmin>>() {
+            @Override
+            public void onResponse(Call<ArrayList<NewAdmin>> call, Response<ArrayList<NewAdmin>> response) {
+                if (response.isSuccessful()) {
+
+                    ArrayList<NewAdmin> newAdmins = new ArrayList<>();
+                    newAdmins = response.body();
+
+                    for(int i=0; i<newAdmins.size(); i++) {
+                        if(newAdmin.getPass().equals(newAdmins.get(i).getPass()) & newAdmin.getId().equals(newAdmins.get(i).getId())){
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(getApplication(), "아이디, 비번이 틀립니다.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } else {
+                    Toast.makeText(getApplication(), "로그인 실패", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<NewAdmin>> call, Throwable t) {
+                Toast.makeText(getApplication(),"로그인 실패",Toast.LENGTH_LONG).show();
+                Log.e("setApiPlan", "error:" + t.getMessage());
+            }
+
+        });
     }
 
 
