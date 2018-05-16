@@ -130,6 +130,8 @@ public class LoginActivity extends AppCompatActivity{
         comment.enqueue(new Callback<ArrayList<NewAdmin>>() {
             @Override
             public void onResponse(Call<ArrayList<NewAdmin>> call, Response<ArrayList<NewAdmin>> response) {
+                boolean flag = false;
+
                 if (response.isSuccessful()) {
 
                     ArrayList<NewAdmin> newAdmins = new ArrayList<>();
@@ -137,11 +139,14 @@ public class LoginActivity extends AppCompatActivity{
 
                     for(int i=0; i<newAdmins.size(); i++) {
                         if(newAdmin.getPass().equals(newAdmins.get(i).getPass()) & newAdmin.getId().equals(newAdmins.get(i).getId())){
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(getApplication(), "아이디, 비번이 틀립니다.", Toast.LENGTH_LONG).show();
+                            flag = true;
                         }
+                    }
+                    if(flag == true) {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(getApplication(), "아이디, 비번이 틀립니다.", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(getApplication(), "로그인 실패", Toast.LENGTH_LONG).show();
