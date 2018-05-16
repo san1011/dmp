@@ -29,8 +29,8 @@ public class NewAdminActivity extends AppCompatActivity {
     private Button button;
     private String password, passwordConfirm = "";
     private DmpWebService dmpWebService;
-    private Retrofit retrofit;;
-
+    private Retrofit retrofit;
+    private NewAdmin newAdmin = new NewAdmin();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +61,6 @@ public class NewAdminActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewAdmin newAdmin = new NewAdmin();
 
                 password = editPass.getText().toString();
                 passwordConfirm = editPassConfirm.getText().toString();
@@ -76,15 +75,41 @@ public class NewAdminActivity extends AppCompatActivity {
                 } else if (!password.equals(passwordConfirm)) {
                     Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다", Toast.LENGTH_LONG).show();
                 } else {
-                    newAdmin.setId(LoginActivity.id);
-                    newAdmin.setPass(password);
-
-                    setApiId(newAdmin);
+                    setIdCheck(LoginActivity.id);
                 }
-
             }
         });
     }
+
+    private void setIdCheck(String id){
+        Call<String> comment = dmpWebService.getIdCheck(id);
+        comment.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String flag = response.body();
+                    Log.v("sanch",flag+"");
+
+                    if(flag.equals("true")){
+                        Toast.makeText(getApplication(), "아이디 중복입니다.", Toast.LENGTH_LONG).show();
+                    }else{
+                        newAdmin.setId(LoginActivity.id);
+                        newAdmin.setPass(password);
+                        setApiId(newAdmin);
+                    }
+
+                } else {
+                    Toast.makeText(getApplication(), "서버 오류123", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "서버 오류", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
     private void setApiId(NewAdmin newAdmin) {
         Log.d("sanch", newAdmin.getId()+ "");
@@ -94,18 +119,16 @@ public class NewAdminActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<NewAdmin> call, Response<NewAdmin> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getApplication(), "저장 되었습니다", Toast.LENGTH_LONG).show();
-
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getApplication(), "저장 실패", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplication(), "회원가입 실패", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<NewAdmin> call, Throwable t) {
-                Toast.makeText(getApplication(), "저장에 실패", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication(), "서버 오류", Toast.LENGTH_LONG).show();
                 Log.e("setApiId", "error:" + t.getMessage());
             }
         });
