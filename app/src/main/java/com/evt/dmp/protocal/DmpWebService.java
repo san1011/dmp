@@ -17,7 +17,7 @@ import retrofit2.http.Query;
  */
 
 public interface DmpWebService {
-    public static final String API_URL = "http://52.79.54.80:9000/dmp/";
+    public static final String API_URL = "http://13.124.203.14:9000/dmp/";
     //public static final String API_URL = "http://192.168.10.56:1338/dmp/";
 
     @POST("plan")

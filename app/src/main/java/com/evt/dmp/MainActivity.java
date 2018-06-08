@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 day = android.text.format.DateFormat.format("yyyy-MM-dd", date).toString();
                 Toast.makeText(MainActivity.this, day + " selected!", Toast.LENGTH_SHORT).show();
                 Log.i("onDateSelected", day + " - Position = " + position);
-                viewPager.setCurrentItem(position-2);
+//                  viewPager.setCurrentItem(position-2);
             }
 
             @Override
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements MainDayChangeFrag
                 cal.setTime(date);
                 cal.add(Calendar.DATE, position-30);
                 dbSetDate = dateFormet.format(cal.getTime());
-                horizontalCalendar.centerCalendarToPosition(position+2);
+                horizontalCalendar.centerCalendarToPosition(position+3);
             }
 
             @Override
